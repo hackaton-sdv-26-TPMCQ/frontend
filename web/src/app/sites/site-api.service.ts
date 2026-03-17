@@ -50,7 +50,7 @@ export interface SiteComparisonResponse {
 
 @Injectable({ providedIn: 'root' })
 export class SiteApiService {
-  private baseUrl = 'http://localhost:8080/api';
+  private baseUrl = 'https://backend1-uj0j.onrender.com';
 
   constructor(private http: HttpClient) {}
 
