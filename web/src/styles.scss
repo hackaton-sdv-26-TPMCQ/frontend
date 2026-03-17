@@ -1,0 +1,35 @@
+/* Thème Capgemini */
+:root {
+  --cap-blue: #0070AD;
+  --cap-blue-hover: #005a8c;
+  --cap-vibrant: #17ABDA;
+  --cap-vibrant-light: #7dd3f0;
+  --cap-bg: #f0f4f8;
+  --cap-card: #ffffff;
+  --cap-text: #1a2d3a;
+  --cap-text-muted: #5c6b7a;
+  --cap-border: #d1dce5;
+  --cap-error: #c53030;
+  --cap-success: #2d7a3e;
+  --cap-radius: 8px;
+  --cap-radius-lg: 12px;
+  --cap-shadow: 0 1px 3px rgba(0, 112, 173, 0.08);
+  --cap-shadow-md: 0 4px 12px rgba(0, 112, 173, 0.12);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--cap-text);
+  background: var(--cap-bg);
+}
