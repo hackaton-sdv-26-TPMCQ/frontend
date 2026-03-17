@@ -16,6 +16,7 @@ import { AuthService } from '../../core/auth/auth.service';
           <span class="app-name">Comparer des sites</span>
         </div>
         <div class="actions">
+          <a routerLink="/dashboard" class="btn-ghost">Dashboard</a>
           <a routerLink="/sites" class="btn-ghost">Sites</a>
           <button type="button" class="btn-ghost" (click)="logout()">Déconnexion</button>
         </div>

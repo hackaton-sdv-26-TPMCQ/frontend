@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
           <span class="app-name">Empreinte Carbone — Sites</span>
         </div>
         <div class="actions">
+          <a routerLink="/dashboard" class="btn-ghost">Dashboard</a>
           <a routerLink="/compare" class="btn-ghost">Comparer des sites</a>
           <button type="button" class="btn-ghost" (click)="refresh()">Rafraîchir</button>
           <button type="button" class="btn-ghost" (click)="logout()">Déconnexion</button>
