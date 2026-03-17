@@ -16,7 +16,8 @@ export class AuthService {
 
   login(username: string, password: string) {
     return this.http
-      .post<AuthResponse>('http://localhost:8080/api/auth/login', {
+      // On remplace localhost par l'URL Render ici 👇
+      .post<AuthResponse>('https://backend1-uj0j.onrender.com/api/auth/login', {
         username,
         password,
       })
