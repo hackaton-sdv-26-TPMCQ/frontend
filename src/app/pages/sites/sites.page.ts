@@ -95,6 +95,15 @@ import { Router } from '@angular/router';
                   <div class="k">CO₂ / employé</div>
                   <div class="v">{{ s.co2ParEmploye | number: '1.2-2' }}</div>
                 </div>
+                <button
+                  type="button"
+                  class="btn-danger btn-sm"
+                  [disabled]="deletingId() === s.id"
+                  (click)="deleteSite(s.id, s.nom)"
+                  title="Supprimer ce site"
+                >
+                  {{ deletingId() === s.id ? 'Suppression…' : 'Supprimer' }}
+                </button>
               </div>
             </div>
           </div>
@@ -144,6 +153,18 @@ import { Router } from '@angular/router';
       }
       .card .btn-ghost:hover { background: rgba(0, 112, 173, 0.08); }
       .btn-sm { padding: 6px 10px; font-size: 0.85rem; }
+      .btn-danger {
+        background: #fff5f5;
+        border: 1px solid rgba(197, 48, 48, 0.55);
+        color: var(--cap-error);
+        padding: 8px 12px;
+        border-radius: var(--cap-radius);
+        cursor: pointer;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .btn-danger:hover:not(:disabled) { background: rgba(197, 48, 48, 0.08); }
+      .btn-danger:disabled { opacity: 0.6; cursor: not-allowed; }
       .btn-primary {
         padding: 10px 16px; border-radius: var(--cap-radius); border: 0;
         background: var(--cap-blue); color: white; font-weight: 700; cursor: pointer;
@@ -200,6 +221,7 @@ import { Router } from '@angular/router';
 export class SitesPage {
   loading = signal(false);
   saving = signal(false);
+  deletingId = signal<number | null>(null);
   loadError = signal<string | null>(null);
   saveError = signal<string | null>(null);
 
@@ -290,6 +312,33 @@ export class SitesPage {
   logout() {
     this.auth.logout();
     this.router.navigateByUrl('/login');
+  }
+
+  deleteSite(id: number, name?: string) {
+    if (this.deletingId() !== null) return;
+    const label = name ? `« ${name} »` : `#${id}`;
+    const ok = window.confirm(`Supprimer définitivement le site ${label} ?`);
+    if (!ok) return;
+
+    this.deletingId.set(id);
+    this.loadError.set(null);
+    this.api.deleteSite(id).subscribe({
+      next: () => {
+        // Mise à jour UI immédiate, puis refresh pour rester aligné avec le backend.
+        this.sites.set(this.sites().filter((s) => s.id !== id));
+        if (this.lastCreated()?.id === id) this.lastCreated.set(null);
+        this.deletingId.set(null);
+        this.refresh();
+      },
+      error: (err) => {
+        this.deletingId.set(null);
+        this.loadError.set(
+          err?.status === 401
+            ? 'Non autorisé (connecte-toi).'
+            : 'Erreur lors de la suppression.',
+        );
+      },
+    });
   }
 }
 

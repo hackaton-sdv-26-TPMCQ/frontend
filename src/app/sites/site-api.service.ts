@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 /**
  * Client HTTP pour l'API sites du backend (baseUrl : localhost:8080/api).
@@ -64,6 +65,10 @@ export class SiteApiService {
 
   createSite(body: SiteRequest) {
     return this.http.post<SiteResponse>(`${this.baseUrl}/sites`, body);
+  }
+
+  deleteSite(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/sites/${id}`);
   }
 
   compare(siteAId: number, siteBId: number) {
