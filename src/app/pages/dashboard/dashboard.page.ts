@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, DestroyRef, ElementRef, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  DestroyRef,
+  ElementRef,
+  Injector,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Chart } from 'chart.js/auto';
 import html2canvas from 'html2canvas';
@@ -186,6 +197,7 @@ export class DashboardPage implements AfterViewInit {
   private auth = inject(AuthService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   loading = signal(false);
   error = signal<string | null>(null);
@@ -219,7 +231,7 @@ export class DashboardPage implements AfterViewInit {
         if (!s) return;
         this.renderCharts(s);
       },
-      { injector: this.destroyRef as any },
+      { injector: this.injector },
     );
   }
 
@@ -231,12 +243,26 @@ export class DashboardPage implements AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (list) => {
-          const sorted = [...list].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-          this.sites.set(sorted);
-          if (this.selectedSiteId() === 0 && sorted.length > 0) {
-            this.selectedSiteId.set(sorted[0].id);
+          try {
+            const sorted = [...list].sort((a, b) => {
+              const bc = b.createdAt ?? '';
+              const ac = a.createdAt ?? '';
+              if (bc !== ac) return bc.localeCompare(ac);
+              return (b.id ?? 0) - (a.id ?? 0);
+            });
+            this.sites.set(sorted);
+            if (this.selectedSiteId() === 0 && sorted.length > 0) {
+              this.selectedSiteId.set(sorted[0].id);
+            }
+          } catch {
+            // Si un champ inattendu casse le tri, on affiche quand même la liste non triée.
+            this.sites.set(list);
+            if (this.selectedSiteId() === 0 && list.length > 0) {
+              this.selectedSiteId.set(list[0].id);
+            }
+          } finally {
+            this.loading.set(false);
           }
-          this.loading.set(false);
         },
         error: (err) => {
           this.loading.set(false);
